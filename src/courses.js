@@ -1,5 +1,4 @@
 const { getRoleFromCategory } = require("./util");
-const updateGuide = require("./updateGuide");
 
 const createCategoryName = (courseString) => `📚 ${courseString}`;
 
@@ -83,7 +82,7 @@ const findOrCreateCategoryWithName = async (
  * @param {Discord.Guild} guild
  */
 const createCourse = async (user, courseString, guild) => {
-  if (user.roles.highest.name !== "admin") return;
+  if (user.roles.highest.name !== "admin") throw new Error('You have no power here!');
   const roleName = getRoleFromCategory(courseString);
 
   const studentRole = await findOrCreateRoleWithName(roleName, guild);
@@ -143,8 +142,6 @@ const createCourse = async (user, courseString, guild) => {
 
     return findOrCreateChannel(channel, guild);
   }, Promise.resolve());
-
-  updateGuide(guild);
 };
 
 module.exports = {

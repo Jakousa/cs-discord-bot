@@ -1,4 +1,4 @@
-const { getRoleFromCategory } = require('./util')
+const { getRoleFromCategory } = require("./util");
 
 /**
  *
@@ -6,7 +6,7 @@ const { getRoleFromCategory } = require('./util')
  */
 const possibleRolesArrayFromGuild = (guild) => {
   const rolesFromCategories = guild.channels.cache
-    .filter(({ type, name }) => type === "category" && name.startsWith('📚'))
+    .filter(({ type, name }) => type === "category" && name.startsWith("📚"))
     .map(({ name }) => getRoleFromCategory(name));
 
   const existingRoles = guild.roles.cache;
@@ -17,7 +17,10 @@ const possibleRolesArrayFromGuild = (guild) => {
   if (rolesFromCategories.length !== acualRoles.size) {
     console.log(
       "Something is wrong, rolesFromCategories did not match the size of acualRoles",
-      rolesFromCategories, rolesFromCategories.length, acualRoles.map(({ name }) => name), acualRoles.size
+      rolesFromCategories,
+      rolesFromCategories.length,
+      acualRoles.map(({ name }) => name),
+      acualRoles.size
     );
   }
   return acualRoles;
@@ -33,7 +36,7 @@ const removeRole = async (user, roleString, guild) => {
   const role = possibleRolesArrayFromGuild(guild).find(
     (role) => role.name === roleString
   );
-  if (!role) return;
+  if (!role) throw new Error("Role does not exist or is not available");
   user.roles.remove(role);
 };
 
@@ -47,7 +50,7 @@ const addRole = async (user, roleString, guild) => {
   const role = possibleRolesArrayFromGuild(guild).find(
     (role) => role.name === roleString
   );
-  if (!role) return;
+  if (!role) throw new Error("Role does not exist or is not available");
   user.roles.add(role);
 };
 
