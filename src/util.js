@@ -9,6 +9,23 @@ const getRoleFromCategory = (categoryName) => {
   return matches?.[1] || cleaned;
 };
 
+/**
+ *
+ * @param {String} name
+ * @param {Discord.Guild} guild
+ */
+const findOrCreateRoleWithName = async (name, guild) => {
+  return (
+    guild.roles.cache.find((role) => role.name === name) ||
+    (await guild.roles.create({
+      data: {
+        name,
+      },
+    }))
+  );
+};
+
 module.exports = {
-  getRoleFromCategory
-}
+  getRoleFromCategory,
+  findOrCreateRoleWithName,
+};

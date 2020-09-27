@@ -1,22 +1,6 @@
-const { getRoleFromCategory } = require("./util");
+const { getRoleFromCategory, findOrCreateRoleWithName } = require("./util");
 
 const createCategoryName = (courseString) => `📚 ${courseString}`;
-
-/**
- *
- * @param {String} name
- * @param {Discord.Guild} guild
- */
-const findOrCreateRoleWithName = async (name, guild) => {
-  return (
-    guild.roles.cache.find((role) => role.name === name) ||
-    (await guild.roles.create({
-      data: {
-        name,
-      },
-    }))
-  );
-};
 
 /**
  *
@@ -82,7 +66,8 @@ const findOrCreateCategoryWithName = async (
  * @param {Discord.Guild} guild
  */
 const createCourse = async (user, courseString, guild) => {
-  if (user.roles.highest.name !== "admin") throw new Error('You have no power here!');
+  if (user.roles.highest.name !== "admin")
+    throw new Error("You have no power here!");
   const roleName = getRoleFromCategory(courseString);
 
   const studentRole = await findOrCreateRoleWithName(roleName, guild);
@@ -101,7 +86,7 @@ const createCourse = async (user, courseString, guild) => {
       name: `${roleName}_announcement`,
       options: {
         type: "text",
-        description: 'Messages from course admins',
+        description: "Messages from course admins",
         parent: category,
         permissionOverwrites: [
           {
