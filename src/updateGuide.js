@@ -29,7 +29,9 @@ You have the following commands available:
 For example: \`!join ohpe\`
 
 Kurssit / Courses:
-${rows.join("\n")}`;
+${rows.join("\n")}
+
+In course specific channels you can also list instructors \`!instructors\``;
 
   message.edit(newContent);
 };

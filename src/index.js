@@ -2,6 +2,7 @@ require("dotenv").config();
 const Discord = require("discord.js");
 const { createCourse } = require("./courses");
 const { addRole, removeRole } = require("./roles");
+const printInstructors = require("./printInstructors");
 const updateGuide = require("./updateGuide");
 const updateFaculty = require("./updateFaculty");
 const client = new Discord.Client();
@@ -30,29 +31,34 @@ const handleCommand = async (action, courseString, msg) => {
       const roleRemoved = await removeRole(who, courseString, guild);
       updateGuide(guild);
       return roleRemoved;
+    case PRINT_INSTRUCTORS_MESSAGE:
+      return printInstructors(msg);
     case INITIALIZE_COURSE_MESSAGE:
       const courseCreated = await createCourse(who, courseString, guild);
       updateGuide(guild);
       return courseCreated;
     case UPDATE_GUIDE_MANUALLY:
-      updateFaculty(guide);
+      updateFaculty(guild);
       return updateGuide(guild);
     default:
       return;
   }
 };
 
-client.on("message", (msg) => {
+client.on("message", async (msg) => {
   if (msg.content.startsWith("!")) {
-    // Keep guide clean, but allow commands to be sent there.
-    if (msg.channel.name === "guide" && !msg.author.bot) msg.delete();
-
     const [action, ...args] = msg.content.split(" ");
     const courseString = args.join(" ");
-
-    handleCommand(action, courseString, msg)
-      .then((success) => msg.react("✅"))
-      .catch((err) => msg.react("❌"));
+    try {
+      await handleCommand(action, courseString, msg)
+      await msg.react("✅")
+    } catch (err) {
+      console.log(err);
+      await msg.react("❌");
+    } finally {
+      // Keep guide clean, but allow commands to be sent there.
+      if (msg.channel.name === "guide" && !msg.author.bot) msg.delete();
+    }
   }
 });
 

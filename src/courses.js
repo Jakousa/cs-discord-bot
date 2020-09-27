@@ -1,3 +1,4 @@
+const Discord = require("discord.js");
 const { getRoleFromCategory, findOrCreateRoleWithName } = require("./util");
 
 const createCategoryName = (courseString) => `📚 ${courseString}`;
@@ -37,6 +38,10 @@ const findOrCreateCategoryWithName = async (
     {
       id: guild.id,
       deny: ["VIEW_CHANNEL"],
+    },
+    {
+      id: guild.me.roles.highest,
+      allow: ["VIEW_CHANNEL"]
     },
     {
       id: adminRole.id,
