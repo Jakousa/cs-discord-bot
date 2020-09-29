@@ -1,3 +1,8 @@
+const GUILD_ID = '757581218085863474'
+
+const context = {
+  ready: false
+}
 /**
  * Expects role to be between parenthesis e.g. (role)
  * @param {String} string
@@ -12,9 +17,9 @@ const getRoleFromCategory = (categoryName) => {
 /**
  *
  * @param {String} name
- * @param {Discord.Guild} guild
  */
-const findOrCreateRoleWithName = async (name, guild) => {
+const findOrCreateRoleWithName = async (name) => {
+  const { guild } = context
   return (
     guild.roles.cache.find((role) => role.name === name) ||
     (await guild.roles.create({
@@ -25,7 +30,17 @@ const findOrCreateRoleWithName = async (name, guild) => {
   );
 };
 
+const initializeApplicationContext = async (client) => {
+  context.guild = await client.guilds.fetch(GUILD_ID)
+
+  context.ready = true
+  console.log('Initialized')
+}
+
+
 module.exports = {
+  initializeApplicationContext,
   getRoleFromCategory,
   findOrCreateRoleWithName,
+  context,
 };

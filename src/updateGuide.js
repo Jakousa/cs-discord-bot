@@ -1,4 +1,4 @@
-const { getRoleFromCategory } = require('./util')
+const { getRoleFromCategory, context } = require('./util')
 const GUIDE_CHANNEL_NAME = "guide";
 
 /**
@@ -40,8 +40,8 @@ In course specific channels you can also list instructors \`!instructors\``;
  *
  * @param {Discord.Guild} guild
  */
-const updateGuide = async (guild) => {
-  const channel = guild.channels.cache.find(
+const updateGuide = async () => {
+  const channel = context.guild.channels.cache.find(
     (c) => c.name === GUIDE_CHANNEL_NAME
   );
   const messages = await channel.messages.fetchPinned(true);

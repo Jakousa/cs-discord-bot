@@ -1,15 +1,15 @@
 const Discord = require("discord.js");
-const { getRoleFromCategory, findOrCreateRoleWithName } = require("./util");
+const { getRoleFromCategory, findOrCreateRoleWithName, context } = require("./util");
 
 const createCategoryName = (courseString) => `📚 ${courseString}`;
 
 /**
  *
  * @param {Object} channelObject
- * @param {Discord.Guild} guild
  * @param {Discord.GuildChannel} parent
  */
-const findOrCreateChannel = (channelObject, guild) => {
+const findOrCreateChannel = (channelObject) => {
+  const { guild } = context
   const { name, options } = channelObject;
   const alreadyExists = guild.channels.cache.find(
     (c) => c.type === options.type && c.name === name
@@ -24,15 +24,14 @@ const findOrCreateChannel = (channelObject, guild) => {
  * @param {String} roleName
  * @param {Discord.Role} studentRole
  * @param {Discord.Role} adminRole
- * @param {Discord.Guild} guild
  */
 const findOrCreateCategoryWithName = async (
   courseName,
   roleName,
   studentRole,
-  adminRole,
-  guild
+  adminRole
 ) => {
+  const { guild } = context
   const categoryName = createCategoryName(courseName, roleName);
   const permissionOverwrites = [
     {
@@ -61,22 +60,22 @@ const findOrCreateCategoryWithName = async (
     },
   };
 
-  return findOrCreateChannel(categoryObject, guild);
+  return findOrCreateChannel(categoryObject);
 };
 
 /**
  *
  * @param {Discord.GuildMember} user
  * @param {String} courseName
- * @param {Discord.Guild} guild
  */
-const createCourse = async (user, courseString, guild) => {
+const createCourse = async (user, courseString) => {
+  const { guild } = context
   if (user.roles.highest.name !== "admin")
     throw new Error("You have no power here!");
   const roleName = getRoleFromCategory(courseString);
 
-  const studentRole = await findOrCreateRoleWithName(roleName, guild);
-  const adminRole = await findOrCreateRoleWithName(`${roleName} admin`, guild);
+  const studentRole = await findOrCreateRoleWithName(roleName);
+  const adminRole = await findOrCreateRoleWithName(`${roleName} admin`);
 
   const category = await findOrCreateCategoryWithName(
     courseString,
@@ -130,7 +129,7 @@ const createCourse = async (user, courseString, guild) => {
   await CHANNELS.reduce(async (promise, channel) => {
     await promise;
 
-    return findOrCreateChannel(channel, guild);
+    return findOrCreateChannel(channel);
   }, Promise.resolve());
 };
 

@@ -1,13 +1,9 @@
-const Discord = require("discord.js");
-const { findOrCreateRoleWithName } = require("./util");
+const { findOrCreateRoleWithName, context } = require("./util");
 const FACULTY_ROLE = "faculty";
 
-/**
- *
- * @param {Discord.Guild} guild
- */
-const updateFaculty = async (guild) => {
-  const facultyRole = await findOrCreateRoleWithName(FACULTY_ROLE, guild);
+const updateFaculty = async () => {
+  const { guild } = context
+  const facultyRole = await findOrCreateRoleWithName(FACULTY_ROLE);
   const usersWhoShouldBeFaculty = guild.roles.cache
     .filter((role) => role.name.includes("admin"))
     .reduce((acc, role) => [...acc, ...role.members.array()], []);

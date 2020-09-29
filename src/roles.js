@@ -1,10 +1,8 @@
-const { getRoleFromCategory } = require("./util");
+const { getRoleFromCategory, context } = require("./util");
 
-/**
- *
- * @param {Discord.Guild} guild
- */
-const possibleRolesArrayFromGuild = (guild) => {
+const possibleRolesArrayFromGuild = () => {
+  const { guild } = context
+
   const rolesFromCategories = guild.channels.cache
     .filter(({ type, name }) => type === "category" && name.startsWith("📚"))
     .map(({ name }) => getRoleFromCategory(name));
@@ -30,10 +28,9 @@ const possibleRolesArrayFromGuild = (guild) => {
  *
  * @param {Discord.GuildMember} user
  * @param {String} roleString
- * @param {Discord.Guild} guild
  */
-const removeRole = async (user, roleString, guild) => {
-  const role = possibleRolesArrayFromGuild(guild).find(
+const removeRole = async (user, roleString) => {
+  const role = possibleRolesArrayFromGuild().find(
     (role) => role.name === roleString
   );
   if (!role) throw new Error("Role does not exist or is not available");
@@ -44,10 +41,9 @@ const removeRole = async (user, roleString, guild) => {
  *
  * @param {Discord.GuildMember} user
  * @param {String} roleString
- * @param {Discord.Guild} guild
  */
-const addRole = async (user, roleString, guild) => {
-  const role = possibleRolesArrayFromGuild(guild).find(
+const addRole = async (user, roleString) => {
+  const role = possibleRolesArrayFromGuild().find(
     (role) => role.name === roleString
   );
   if (!role) throw new Error("Role does not exist or is not available");
