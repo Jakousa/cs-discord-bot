@@ -1,3 +1,4 @@
+const Discord = require('discord.js')
 const { getRoleFromCategory, context } = require('./util')
 const GUIDE_CHANNEL_NAME = "guide";
 
@@ -5,7 +6,7 @@ const GUIDE_CHANNEL_NAME = "guide";
  *
  * @param {Discord.Message} message
  */
-const updateGuideMessage = (message) => {
+const updateGuideMessage = async (message) => {
   const rows = message.guild.channels.cache
     .filter((ch) => ch.type === "category" && ch.name.startsWith("📚"))
     .map((ch) => {
@@ -31,7 +32,10 @@ For example: \`!join ohpe\`
 Kurssit / Courses:
 ${rows.join("\n")}
 
-In course specific channels you can also list instructors \`!instructors\``;
+In course specific channels you can also list instructors \`!instructors\`
+
+See more with \`!help\` and test out the commands in <#${context.commands.id}> channel!
+`;
 
   message.edit(newContent);
 };

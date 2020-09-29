@@ -32,15 +32,41 @@ const findOrCreateRoleWithName = async (name) => {
 
 const initializeApplicationContext = async (client) => {
   context.guild = await client.guilds.fetch(GUILD_ID)
+  context.commands = context.guild.channels.cache.find(c => c.type === 'text' && c.name === 'commands')
 
   context.ready = true
   console.log('Initialized')
 }
+
+const possibleRolesArray = () => {
+  const { guild } = context
+
+  const rolesFromCategories = guild.channels.cache
+    .filter(({ type, name }) => type === "category" && name.startsWith("📚"))
+    .map(({ name }) => getRoleFromCategory(name));
+
+  const existingRoles = guild.roles.cache;
+
+  const acualRoles = existingRoles.filter((role) =>
+    rolesFromCategories.includes(role.name)
+  );
+  if (rolesFromCategories.length !== acualRoles.size) {
+    console.log(
+      "Something is wrong, rolesFromCategories did not match the size of acualRoles",
+      rolesFromCategories,
+      rolesFromCategories.length,
+      acualRoles.map(({ name }) => name),
+      acualRoles.size
+    );
+  }
+  return acualRoles;
+};
 
 
 module.exports = {
   initializeApplicationContext,
   getRoleFromCategory,
   findOrCreateRoleWithName,
+  possibleRolesArray,
   context,
 };
